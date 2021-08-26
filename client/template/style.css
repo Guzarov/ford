@@ -1,0 +1,72 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: sans-serif;
+  width: 100%;
+  min-height: 100vh;
+  background-color: #eeeff3;
+}
+
+.header {
+  padding: 10px;
+  font-size: x-large;
+  border-bottom: 1px solid #333333;
+}
+
+.header > span {
+  float: right;
+}
+
+.container {
+  padding: 10px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.column {
+  gap: 10px;
+  display: grid;
+  align-content: start;
+  padding: 10px;
+}
+
+.caption {
+  font-size: large;
+}
+
+.column > button {
+  height: 30px;
+}
+
+.well-went > .item {
+  background-color: #009886;
+}
+
+.to-improve >.item {
+  background-color: #e92c64;
+}
+
+.action-items > .item {
+  background-color: #a63eb9;
+}
+
+.item {
+  padding: 10px;
+  color: white;
+  border-radius: 5px;
+}
+
+.item textarea {
+  width: 100%;
+  resize: none;
+}
+
+.actions {
+  margin-top: 10px;
+  text-align: right;
+}
+
