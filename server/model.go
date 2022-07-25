@@ -10,7 +10,7 @@ import (
 type Board struct {
 	Id    string `json:"id"`
 	Name  string `json:"name"`
-	Items []Item `json:"items""`
+	Items []Item `json:"items"`
 }
 
 type Item struct {
@@ -37,7 +37,6 @@ const (
 
 type Model struct {
 	storage *Storage
-	boards  map[string]*Board
 }
 
 var lock = &sync.Mutex{}
@@ -45,7 +44,6 @@ var lock = &sync.Mutex{}
 func NewModel(storage *Storage) (*Model, error) {
 	return &Model{
 		storage: storage,
-		boards:  make(map[string]*Board),
 	}, nil
 }
 
@@ -83,29 +81,22 @@ func (model *Model) HandleMessage(boardId string, payload []byte) (DispatchTo, [
 }
 
 func (model *Model) getOrCreate(boardId string) *Board {
-	board, exists := model.boards[boardId]
-	if !exists {
+	board, err := model.storage.FindBoard(boardId)
+	if err != nil {
+		log.Fatal("Cannot find board", err)
+	}
+	if board == nil {
 		lock.Lock()
 		defer lock.Unlock()
-		board, exists = model.boards[boardId]
-		if !exists {
-			newBoard, err := model.storage.FindBoard(boardId)
-			if err != nil {
-				log.Fatal("Cannot find board", err)
-			}
-			if newBoard == nil {
-				newBoard = &Board{
-					Id:    boardId,
-					Name:  "New board",
-					Items: []Item{},
-				}
-				err = model.storage.CreateBoard(newBoard)
-				if err != nil {
-					log.Fatal("Cannot create board", err) //todo
-				}
-			}
-			model.boards[boardId] = newBoard
-			board = newBoard
+
+		board = &Board{
+			Id:    boardId,
+			Name:  "New board",
+			Items: []Item{},
+		}
+		err = model.storage.CreateBoard(board)
+		if err != nil {
+			log.Fatal("Cannot create board", err) //todo
 		}
 	}
 	return board
@@ -130,7 +121,7 @@ func (model *Model) addItem(board *Board, cmd map[string]string) (DispatchTo, []
 		Comments: []Comment{},
 	}
 	board.Items = append(board.Items, *item)
-	//todo save
+	model.storage.SaveBoard(board)
 	js, err := json.Marshal(item)
 	return ToRoom, js, err
 }

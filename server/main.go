@@ -7,7 +7,7 @@ import (
 
 func main() {
 	//storage, err := NewStorage(os.Getenv("DB_URL"), os.Getenv("DB_NAME"))
-	storage, err := NewStorage("mongodb://base:27017", "ford")
+	storage, err := NewStorage("mongodb://localhost:27017", "ford")
 	if err != nil {
 		log.Fatal("Cannot init storage", err)
 	}
